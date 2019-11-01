@@ -1,0 +1,224 @@
+Array-Stack
+public class Array<E> {
+	private E[] data;
+	private int size;
+	
+	//构造函数，通过数组容量capacity构造Array
+	public Array(int capacity) {
+		data = (E[])new Object[capacity];
+		size = 0;
+	}
+	//无参构造函数，数组容量10
+	public Array() {
+		this(10);
+	}
+	//获取数组容量
+	public int getCapacity() {
+		return data.length;
+	}
+	//获取数组元素个数
+	public int getSize() {
+		return size;
+	}
+	//判空
+	public boolean isEmpty() {
+		return size == 0;
+	}
+	//在index位置插入新元素e
+	public void add(int index,E e) {
+		if(index < 0 || index > size)
+			throw new IllegalArgumentException("Add failed");
+		if(size == data.length)
+			resize(2*data.length);
+		for(int i =size - 1;i >= index;i--)
+			data[i+1] = data[i];
+		data[index] = e;
+		size++;
+	}
+	//尾插新元素
+	public void addLast(E e) {
+		add(size,e);
+	}
+	//头插新元素
+	public void addFirst( E e) {
+		add(0,e);
+	}
+	//获取index位置的元素
+	public E get(int index) {
+		if(index < 0 || index >= size)
+			throw new IllegalArgumentException("Get failed. Index is Illegal.");
+		return data[index];
+	}
+	//获取尾元素
+	public E getLast() {
+		return get(size - 1);
+	}
+	//获取头元素
+	public E getFirst() {
+		return get(0);
+	}
+	//修改index位置元素为e
+	public void set(int index,E e) {
+		if(index < 0 || index >= size)
+			throw new IllegalArgumentException("Set failed. Index is Illegal.");
+		data[index] = e;
+	}
+	//判元素存在于数组
+	public boolean contains(E e) {
+		for(int i = 0;i < size;i++) {
+			if(data[i].equals(e))
+				return true;
+		}
+		return false;
+	}
+	//查找元素位置，不存在返回-1
+	public int find(E e) {
+		for(int i = 0;i < size;i++) {
+			if(data[i].equals(e))
+				return i;
+		}
+		return -1;
+	}
+	//删除index位置元素，返回删除的元素
+	public E remove(int index) {
+		if(index < 0 || index >= size)
+			throw new IllegalArgumentException("Remove failed. Index is Illegal.");
+		E ret = data[index];
+		for(int i = index+1;i < size;i++)
+			data[i - 1] = data[i];
+		size--;
+		data[size] = null;
+		if(size == data.length/4 && data.length/2 != 0)
+			resize(data.length/2);
+		return ret;
+	}
+	//头删，返回删除的元素
+	public E removeFirst() {
+		return remove(0);
+	}
+	//尾删，返回删除的元素
+	public E removeLast() {
+		return remove(size-1);
+	}
+	//删除指定元素e
+	public void removeElement(E e) {
+		int index = find(e);
+		if(index != -1)
+			remove(index);
+	}
+	//扩容为newCapacity
+	private void resize(int newCapacity) {
+		E[] newDate = (E[])new Object[newCapacity];
+		for(int i = 0; i < size;i++) {
+			newDate[i] = data[i];
+			data = newDate;
+		}
+	}
+	//输出栈
+	public String toString() {
+		StringBuilder res = new StringBuilder();
+		res.append(String.format("Array:size = %d,capacity = %d\n",size,data.length));
+		res.append('[');
+		for(int i = 0;i < size;i++) {
+			res.append(data[i]);
+			if(i != size - 1)
+				res.append(", ");
+		}
+		res.append(']');
+		return res.toString();
+	}
+
+}
+
+
+
+public class ArrayStack<E> implements Stack<E>{
+	
+	private Array<E> array;
+	//构造
+	public ArrayStack(int capacity) {
+		array = new Array<E>(capacity);
+	}
+	//无参构造
+	public ArrayStack() {
+		array = new Array<E>();
+	}
+	
+	@Override//断言重写
+	//获取数组元素大小
+	public int getSize() {
+		// TODO Auto-generated method stub
+		return array.getSize();
+	}
+
+	@Override//断言重写
+	//判空
+	public boolean isEmpty() {
+		// TODO Auto-generated method stub
+		return array.isEmpty();
+	}
+	//获取数组容量
+	public int getCapacity()
+	{
+		return array.getCapacity();
+	}
+	
+	@Override//断言重写
+	public void push(E e) {
+		// TODO Auto-generated method stub
+		array.addLast(e);
+	}
+
+	@Override//断言重写
+	//弹出栈顶元素，并返回原栈顶元素
+	public E pop() {
+		// TODO Auto-generated method stub
+		return array.removeLast();
+	}
+
+	@Override//断言重写
+	//获取栈顶元素
+	public E peek() {
+		// TODO Auto-generated method stub
+		return array.getLast();
+	}
+	
+	public String toString() {
+		StringBuilder res = new StringBuilder();
+		res.append("Stack:");
+		res.append('[');
+		for(int i = 0;i < array.getSize();i++) {
+			res.append(array.get(i));
+			if(i != array.getSize()-1)
+				res.append(", ");
+		}
+		res.append("] top");
+		return res.toString();
+	}
+
+}
+
+
+
+public interface Stack<E> {
+	int getSize();
+	boolean isEmpty();
+	void push(E e);
+	E pop();
+	E peek();
+}
+
+
+
+public class Main {
+
+	public static void main(String[] args) {
+		ArrayStack<Integer>stack = new ArrayStack<>();
+		for(int i = 0;i < 5;i++) {
+			stack.push(i);
+			System.out.println(stack);
+		}
+	    stack.pop();
+	    System.out.println(stack);
+	}
+}
